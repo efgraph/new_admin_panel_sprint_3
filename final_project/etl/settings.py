@@ -15,3 +15,9 @@ class ElasticConnection(BaseSettings):
 
 class Etl(BaseSettings):
     state_file: str = Field(..., env="FILE_STATE_PATH")
+
+
+class Settings(BaseSettings):
+    postgres_conn: PostgresConnection = PostgresConnection()
+    elastic_conn: ElasticConnection = ElasticConnection()
+    etl_state: Etl = Etl()

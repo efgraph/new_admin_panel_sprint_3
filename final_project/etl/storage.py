@@ -6,15 +6,11 @@ import os.path
 class BaseStorage:
     @abc.abstractmethod
     def save_state(self, state):
-        curr = self.retrieve_state()
-        with open(self.file_path, 'w') as fs:
-            json.dump({**curr, **state}, fs)
+        pass
 
     @abc.abstractmethod
     def retrieve_state(self):
-        with open(self.file_path) as fs:
-            data = json.load(fs)
-        return data
+        pass
 
 
 class JsonFileStorage(BaseStorage):
@@ -23,6 +19,17 @@ class JsonFileStorage(BaseStorage):
         if not os.path.exists(self.file_path):
             file = open(self.file_path, 'w+')
             file.write('{}')
+            file.close()
+
+    def save_state(self, state):
+        curr = self.retrieve_state()
+        with open(self.file_path, 'w') as fs:
+            json.dump(curr | state, fs)
+
+    def retrieve_state(self):
+        with open(self.file_path) as fs:
+            data = json.load(fs)
+        return data
 
 
 class State:
@@ -34,7 +41,4 @@ class State:
 
     def get_state(self, key: str):
         state = self.storage.retrieve_state()
-        try:
-            return state[key]
-        except:
-            return None
+        return state.get(key)

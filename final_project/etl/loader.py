@@ -1,9 +1,10 @@
+import http
 import json
 
 import requests
 from urllib.parse import urljoin
 
-from settings import ElasticConnection
+from settings import Settings
 from transformer import TransformerUtil
 
 
@@ -13,11 +14,13 @@ class ESLoader:
         f = open('search_schema.json')
         body = json.dumps(json.load(f))
         response = requests.put(
-            urljoin(ElasticConnection().es_uri, 'movies'),
+            urljoin(Settings().elastic_conn.es_uri, 'movies'),
             data=body,
-            headers={'Content-Type': 'application/x-ndjson'}
+            headers={'Content-Type': 'application/x-ndjson'},
+            verify=False,
+            timeout=10
         )
-        if response.status_code != 200:
+        if response.status_code != http.HTTPStatus.OK:
             raise Exception('es schema is not set')
 
     def load(self, data):
@@ -37,10 +40,12 @@ class ESLoader:
         str_query = '\n'.join(prepared_query) + '\n'
 
         response = requests.post(
-            urljoin(ElasticConnection().es_uri, '_bulk'),
+            urljoin(Settings().elastic_conn.es_uri, '_bulk'),
             data=str_query,
-            headers={'Content-Type': 'application/x-ndjson'}
+            headers={'Content-Type': 'application/x-ndjson'},
+            verify=False,
+            timeout=10
         )
 
-        if response.status_code != 200:
+        if response.status_code != http.HTTPStatus.OK:
             raise Exception('check if vpn is on')
