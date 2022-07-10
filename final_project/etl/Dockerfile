@@ -1,9 +1,11 @@
-FROM python:3.10
+FROM nikolaik/python-nodejs
 
 WORKDIR /opt/etl
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+
+RUN npm install -g newman
 
 COPY requirements.txt requirements.txt
 

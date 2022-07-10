@@ -44,6 +44,7 @@ class Filmwork(UUIDMixin, TimeStampedMixin):
     rating = models.FloatField(_('rating'), null=True,
                                validators=[MinValueValidator(0), MaxValueValidator(100)])
     type = models.CharField(_('type'), max_length=10, choices=FilmworkType.choices)
+    search_indexed = models.PositiveSmallIntegerField(null=True, editable=False)
     genres = models.ManyToManyField('Genre', through='GenreFilmwork')
     persons = models.ManyToManyField('Person', through='PersonFilmwork')
 
